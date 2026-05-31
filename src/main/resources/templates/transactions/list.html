@@ -3,9 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <title>家計簿一覧</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
-<h1>家計簿 Web アプリケーション</h1>
-<p>テスト表示：ここにデータベースから取得した一覧が表示されます。</p>
+<body class="container mt-4">
+<div class="d-flex justify-content-between mb-3">
+    <h1>家計簿一覧</h1>
+    <div>
+        <a th:href="@{/transactions/new}" class="btn btn-primary">新規登録</a>
+        <a th:href="@{/summary}" class="btn btn-secondary">月別集計</a>
+    </div>
+</div>
+<table class="table table-bordered">
+    <thead class="table-light">
+    <tr>
+        <th>ID</th><th>日付</th><th>種別</th><th>カテゴリ</th><th>金額</th><th>メモ</th><th>操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="t : ${transactions}">
+        <td th:text="${t.id}"></td>
+        <td th:text="${t.txnDate}"></td>
+        <td th:text="${t.type == 'income' ? '収入' : '支出'}"></td>
+        <td th:text="${t.category}"></td>
+        <td th:text="${#numbers.formatInteger(t.amount, 1, 'COMMA')} + '円'"></td>
+        <td th:text="${t.memo}"></td>
+        <td>
+            <a th:href="@{/transactions/{id}/edit(id=${t.id})}" class="btn btn-sm btn-warning">編集</a>
+            <form th:action="@{/transactions/{id}/delete(id=${t.id})}" method="post"
+                  onsubmit="return confirm('本当に削除しますか？');" style="display:inline;">
+                <button type="submit" class="btn btn-sm btn-danger">削除</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<div class="p-3 bg-light text-center fw-bold">
+    収入合計: [[${#numbers.formatInteger(totalIncome, 1, 'COMMA')}]]円 |
+    支出合計: [[${#numbers.formatInteger(totalExpense, 1, 'COMMA')}]]円 |
+    収支: [[${balance >= 0 ? '+' : ''}]][[${#numbers.formatInteger(balance, 1, 'COMMA')}]]円
+</div>
 </body>
 </html>
