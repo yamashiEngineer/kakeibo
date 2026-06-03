@@ -5,7 +5,7 @@ import lombok.Data;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "transactions")
+@Table(name = "transactions") //【point】記載必須
 @Data
 public class Transaction {
     @Id
@@ -16,6 +16,7 @@ public class Transaction {
     private String category;
     private String memo;
 
+    //【point】変数がキャメルケースなのでスネークケースで指定する
     @Column(name = "txn_date")
     private LocalDate txnDate;
 

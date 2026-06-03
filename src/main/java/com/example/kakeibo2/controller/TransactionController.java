@@ -22,6 +22,7 @@ public class TransactionController {
     public String list(Model model) {
         List<Transaction> list = transactionService.getAllTransactions();
 
+        // t -> "income".equals(t.getType())はヌルぽしない良い書き方
         int totalIncome = list.stream().filter(t -> "income".equals(t.getType())).mapToInt(Transaction::getAmount).sum();
         int totalExpense = list.stream().filter(t -> "expense".equals(t.getType())).mapToInt(Transaction::getAmount).sum();
 
@@ -46,6 +47,8 @@ public class TransactionController {
                 .map(t -> {
                     model.addAttribute("transaction", t);
                     return "transactions/form";
+
+                    // orElseは Optional クラスが持つメソッド
                 }).orElse("redirect:/transactions"); // 存在しないIDは一覧へ
     }
 
@@ -53,6 +56,7 @@ public class TransactionController {
     @PostMapping({"/transactions", "/transactions/{id}"})
     public String save(@PathVariable(value = "id", required = false) Integer id, @ModelAttribute Transaction transaction) {
         if (id != null) {
+            // 画面側に ID を持たせていない、またはセキュリティのため
             transaction.setId(id);
         }
         transactionService.saveTransaction(transaction);
