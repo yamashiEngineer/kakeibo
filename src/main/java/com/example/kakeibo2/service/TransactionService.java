@@ -21,18 +21,15 @@ public class TransactionService {
         return transactionRepository.findAllByOrderByTxnDateAsc();
     }
 
-    public Optional<Transaction> getTransactionById(Integer id) {
-        return transactionRepository.findById(id);
+    public Transaction getTransactionById(Integer id) {
+        return transactionRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("指定された取引データ（ID: " + id + "）が見つかりません。"));
     }
 
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public void saveTransaction(Transaction transaction) {
-        try {
-            transactionRepository.save(transaction);
-        } catch (Exception e) {
-            System.err.println("【エラー】データ保存に失敗しました: " + e.getMessage()); // スタックトレース単体出力を回避
-            throw new RuntimeException("データの保存に失敗しました。");
-        }
+        // try-catchは不要。例外はそのまま上に放り投げる
+        transactionRepository.save(transaction);
     }
 
     @Transactional(rollbackFor = Exception.class)
