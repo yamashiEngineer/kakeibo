@@ -34,12 +34,9 @@ public class TransactionService {
 
     @Transactional(rollbackFor = Exception.class)
     public void deleteTransaction(Integer id) {
-        try {
-            transactionRepository.deleteById(id);
-        } catch (Exception e) {
-            System.err.println("【エラー】データ削除に失敗しました: " + e.getMessage());
-            throw new RuntimeException("データの削除に失敗しました。");
-        }
+        // 例外が発生した場合はSpringが自動でキャッチしてロールバックし、
+        // 上位層へ例外をそのまま伝播させる。
+        transactionRepository.deleteById(id);
     }
 
     public List<Map<String, Object>> getMonthlySummary() {
